@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+	<!-- LOTES -->
+        <record id="lotes_tree_view" model="ir.ui.view">
+            <field name="name">elote.lote.treeview</field>
+            <field name="model">elote.lote</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Lotes" editable="bottom">
+                        <field name="name"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                        <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="lotes_view" model="ir.ui.view">
+            <field name="name">elote.lote.view</field>
+            <field name="model">elote.lote</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Lotes">
+                    <group col="6" colspan="4">
+                        <field name="name"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                        <field name="state"/>
+                        <field name="sequence_nbr" readonly="1"/>
+                    </group>
+		    <group colspan="4">
+		   	    <field name="product_ids">
+					<tree string="Products">
+						<field name="ean13" />
+						<field name="name" />
+					</tree>
+			    </field>
+		    </group>
+		    <group colspan="4">
+	   	    	<field name="user_ids">
+				<tree string="Users">
+					<field name="login" />
+					<field name="name" />
+				</tree>
+		    	</field>
+		    </group>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_lotes_form" model="ir.actions.act_window">
+            <field name="name">Lotes</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">elote.lote</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="lotes_tree_view"/>
+        </record>
+
+        <menuitem id="menu_elote_lote" name="Lote Admin" parent="base.menu_product" sequence="5" action="action_lotes_form" />
+	
+    </data>
+</openerp>

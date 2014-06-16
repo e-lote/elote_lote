@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_po_lote_form">
+            <field name="name">purchase.order.lote.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <data>
+                        <field name="partner_ref" position="before">
+        	                <field name="lote_id" readonly="1"/>
+                        </field>
+                </data>
+            </field>
+        </record>
+
+      
+    </data>
+</openerp>
