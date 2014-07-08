@@ -50,7 +50,12 @@ class purchase_order(osv.osv):
 		#sequence_id = self.pool.get('ir.sequence').search('prefix','=','LOT')
 		#if not sequence_id:
                 #        raise osv.except_osv(_('Error!'), _('Please define a sequence for lotes.'))
-		vals['lote_id'] = self.pool.get('elote.lote').search(cr,uid,[('state','=','open')])[0]
+		lote_id = self.pool.get('elote.lote').search(cr,uid,[('state','=','open')])
+		if not lote_id:
+                        raise osv.except_osv('Error!', 'No hay lotes abiertos para procesar.')
+
+		vals['lote_id'] = lote_id[0]
+		
 		if not vals['lote_id']:
                         raise osv.except_osv('Error!', 'No hay lotes abiertos para procesar.')
 			
