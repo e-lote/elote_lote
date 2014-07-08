@@ -64,22 +64,27 @@ class purchase_order(osv.osv):
 
 purchase_order()
 
-"""
-class purchase_order_line(osv.osv):
 
-	def _check_dates(self, cr, uid, ids, context=None):
+class purchase_order_line(osv.osv):
+	_name = "purchase.order.line"
+	_inherit = "purchase.order.line"
+
+	def _check_lotes(self, cr, uid, ids, context=None):
 		obj = self.browse(cr, uid, ids[0], context=context)
-		if obj.date_start > obj.date_end:
-			return False
-        	return True
+		return_value = False
+		for product in obj.order_id.lote_id.product_ids:
+			if product.id == obj.product_id.id:
+				return_value = True
+				break
+        	return return_value
 
 	_constraints = [
-        	(_check_dates, 'Start date should be less than end date.', ['product_id']),
+        	(_check_lotes, 'Product should be included in lote', ['product_id']),
     	]
 
 purchase_order_line()
 
-
+"""
 class elote_lote(osv.osv):
 	_name = "elote.lote"
 	_description = "Lot Administration class"
