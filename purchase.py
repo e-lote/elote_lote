@@ -58,6 +58,15 @@ class purchase_order(osv.osv):
 		
 		if not vals['lote_id']:
                         raise osv.except_osv('Error!', 'No hay lotes abiertos para procesar.')
+		valid_user = False
+		obj = self.pool.get('elote.lote').browse(cr, uid, lote_id, context=context)
+		# import pdb;pdb.set_trace()
+		for user in obj[0].user_ids:
+			if user.id == uid:
+				valid_user = True
+				break
+		if not valid_user:
+                        raise osv.except_osv('Error!', 'El usuario no se encuentra habilitado para procesar lotes.')
 			
         	return super(purchase_order, self).create(cr, uid, vals, context=context)
 	
