@@ -55,12 +55,14 @@ class purchase_order(osv.osv):
                         raise osv.except_osv('Error!', 'No hay lotes abiertos para procesar.')
 
 		vals['lote_id'] = lote_id[0]
+		# import pdb;pdb.set_trace()
+		user_obj = self.pool.get('res.users').browse(cr,uid,uid,context=context)
+		vals['dest_address_id'] = user_obj.partner_id.id
 		
 		if not vals['lote_id']:
                         raise osv.except_osv('Error!', 'No hay lotes abiertos para procesar.')
 		valid_user = False
 		obj = self.pool.get('elote.lote').browse(cr, uid, lote_id, context=context)
-		# import pdb;pdb.set_trace()
 		for user in obj[0].user_ids:
 			if user.id == uid:
 				valid_user = True
