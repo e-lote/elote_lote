@@ -60,7 +60,8 @@
             <field name="view_id" ref="lotes_tree_view"/>
         </record>
 
-        <menuitem id="menu_elote_lote" name="Lote Admin" parent="base.menu_product" sequence="5" action="action_lotes_form" />
+        <menuitem id="menu_elote_lote" name="Lote Admin" parent="purchase.menu_procurement_management_product" 
+		sequence="5" action="action_lotes_form" />
 	
     </data>
 </openerp>
