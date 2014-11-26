@@ -1,6 +1,7 @@
 from openerp.osv import osv,fields
 from datetime import date
 
+
 class purchase_order(osv.osv):
 	_name = "purchase.order"
 	_inherit = "purchase.order"

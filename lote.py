@@ -1,6 +1,21 @@
 from openerp.osv import osv,fields
 from datetime import date
 
+class product_product(osv.osv):
+    _name = "product.product"
+    _inherit = "product.product"
+
+    def search(self, cr, uid, args, offset=0, limit=None, order=None, context=None, count=False):
+        context = context or {}
+        if context.get('search_default_elote_id'):
+            args.append((('id', 'inselect',('select product_id from product_lote_rel PL where PL.lote_id = %s',
+                          context['search_default_elote_id']))))
+        if context.get('search_default_partner_id'):
+            args.append((('id', 'inselect',('select PP.id from product_product PP left join product_supplierinfo SI on (SI.product_tmpl_id = PP.product_tmpl_id) where SI.name = %s',
+                          context['search_default_partner_id']))))
+        return super(product_product, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
+product_product()
+
 class elote_lote(osv.osv):
 	_name = "elote.lote"
 	_description = "Lot Administration class"
