@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_elote_lote_user_purchaser,access.elote_lote.user.purchaser,elote_lote.model_elote_lote,weblot.group_elote_user_purchaser,1,0,0,0
+access_elote_lote_manager_purchaser,access.elote_lote.manager.purchaser,elote_lote.model_elote_lote,weblot.group_elote_manager_purchaser,1,1,1,1

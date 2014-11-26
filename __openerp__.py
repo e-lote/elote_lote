@@ -32,7 +32,8 @@
     'init_xml': [],
     'data': [
 	'lote_view.xml',
-	'purchase_view.xml'
+	'purchase_view.xml',
+	'security/ir.model.access.csv'
     ],
     'demo_xml': [
     ],
