@@ -8,7 +8,7 @@
             <field name="model">elote.lote</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="Lotes" editable="bottom">
+                <tree string="Lotes">
                         <field name="name"/>
                         <field name="date_start"/>
                         <field name="date_end"/>
@@ -23,29 +23,28 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Lotes">
-                    <group col="6" colspan="4">
-                        <field name="name"/>
-                        <field name="date_start"/>
-                        <field name="date_end"/>
-                        <field name="state"/>
-                        <field name="sequence_nbr" readonly="1"/>
-                    </group>
-		    <group colspan="4">
-		   	    <field name="product_ids">
-					<tree string="Products">
-						<field name="ean13" />
+                    <sheet string="Lotes">
+			    <div class="oe_right oe_button_box" name="buttons">
+				    <button type="object" name="view_supplier_ids" class="oe_stat_button" icon="fa-star">
+					    <field name="supplier_ids_count" widget="statinfo" string="Supplier Info" help=""/>
+				    </button>
+			    </div>
+			    <group col="6" colspan="4">
+				<field name="name"/>
+				<field name="date_start"/>
+				<field name="date_end"/>
+				<field name="state"/>
+				<field name="sequence_nbr" readonly="1"/>
+			    </group>
+			    <group colspan="4">
+				<field name="user_ids">
+					<tree string="Users">
+						<field name="login" />
 						<field name="name" />
 					</tree>
-			    </field>
-		    </group>
-		    <group colspan="4">
-	   	    	<field name="user_ids">
-				<tree string="Users">
-					<field name="login" />
-					<field name="name" />
-				</tree>
-		    	</field>
-		    </group>
+				</field>
+			    </group>
+		    </sheet>
                 </form>
             </field>
         </record>
@@ -61,7 +60,7 @@
         </record>
 
         <menuitem id="menu_elote_lote" name="Lote Admin" parent="purchase.menu_procurement_management_product" 
-		sequence="5" action="action_lotes_form" />
+		sequence="5" action="action_lotes_form" groups="weblot.group_elote_manager_purchaser"/>
 	
     </data>
 </openerp>
