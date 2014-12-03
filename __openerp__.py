@@ -26,12 +26,13 @@
     'description': "",
     'author': 'Moldeo Interactive',
     'website': 'http://business.moldeo.coop',
-    'depends': ['base','product','purchase'],
+    'depends': ['mail','product','purchase'],
     'init_xml': [],
     'data': [
 	'lote_view.xml',
 	'purchase_view.xml',
-	'security/ir.model.access.csv'
+	'security/ir.model.access.csv',
+	'wizard/catalog_import_view.xml',
     ],
     'demo_xml': [
     ],

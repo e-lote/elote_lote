@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+        <record id="view_purchase_order_import" model="ir.ui.view">
+              <field name="name">Import Catalog</field>
+              <field name="model">elote.catalog_import</field>
+              <field name="type">form</field>
+              <field name="arch" type="xml">
+                <form string="Catalog import" version="7.0">
+                    <group string="Catalog import">
+                        <field name="data"/>
+                        <field name="lote_id"/>
+                        <field name="first_row_column"/>
+                        <field name="delimiter"/>
+                        <field name="update_products"/>
+                        <field name="update_supplierinfo"/>
+                        <field name="complete_dimensions"/>
+                    </group>
+                    <footer>
+                        <button name="do_import" string="Import"  type="object" class="oe_highlight"/>
+			or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+		</form>
+	      </field>
+	</record>
+</data>
+</openerp>
