@@ -54,7 +54,6 @@ class purchase_order(osv.osv):
                     product_lote_ids = self.pool.get('product.product').search(cr, uid, [('id','=',line.product_id.id)], context={'search_default_elote_id': obj.order_id.lote_id.id})
                     invalid_product = not product_lote_ids
                     if invalid_product:
-                        import pdb; pdb.set_trace()
                         message_id = self.message_post(cr, uid, [so.id],
                                                        subject=_('Request action'),
                                                        body=_('The product %s is required for this lote.') % (line.product_id.name))
@@ -97,13 +96,20 @@ class purchase_order_line(osv.osv):
 	def _check_lotes(self, cr, uid, ids, context=None):
             assert len(ids) == 1, "Only works by one line"
             obj = self.browse(cr, uid, ids[0], context=context)
-            return len(self.pool.get('product.product').search(cr, uid,
+            print "----"
+            print obj.product_id.id
+            import pdb; pdb.set_trace()
+            print obj.order_id.lote_id.id
+            r = len(self.pool.get('product.product').search(cr, uid,
                                                                [('id','=',obj.product_id.id)],
                                                                context={'search_default_elote_id': obj.order_id.lote_id.id})
-                      ) == 1
+                      )
+            if r != 1:
+                import pdb; pdb.set_trace()
+            return r == 1
 
 	_constraints = [
-        	(_check_lotes, 'Product should be included in lote', ['product_id']),
+        	(_check_lotes, 'Product should be included in lote say line', ['product_id']),
     	]
 
 purchase_order_line()
