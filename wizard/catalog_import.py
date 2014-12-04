@@ -37,10 +37,7 @@ def unicode_csv_reader(unicode_csv_data, dialect=csv.excel, **kwargs):
 
 def utf_8_encoder(unicode_csv_data):
     for line in unicode_csv_data:
-        try:
-            yield line.encode('utf-8')
-        except:
-            print line
+        yield line.encode('utf-8')
 
 def _n(value, force=False):
     value = value.strip()
@@ -95,6 +92,7 @@ class catalog_import(osv.osv_memory):
         user_obj          = self.pool.get('res.users')
         product_obj       = self.pool.get('product.product')
         product_tmpl_obj  = self.pool.get('product.template')
+        product_category_obj = self.pool.get('product.category')
         # Dimensions.
         paper_colour_obj  = self.pool.get('product.paper_colour')
         colour_pages_obj  = self.pool.get('product.colour_pages')
@@ -167,7 +165,7 @@ class catalog_import(osv.osv_memory):
                                          (ireader.line_num, len(row)))
                 
                 # Translate values
-                partner_id = (partner_obj.search(cr, uid, ['|',('name','=',row[0]),('ref','=',row[0])])+
+                partner_id = (partner_obj.search(cr, uid, ['|',('name','=',row[10]),('ref','=',row[10])])+
                               [False])[0]
                 product_tmpl_id = imp_process(product_tmpl_obj,
                                               [('ean13','=',row[1])],
@@ -179,7 +177,7 @@ class catalog_import(osv.osv_memory):
                                                'ubs_code_suffix': _n(row[4]),
                                                'language': category_obj(language_obj, row[5], create=wiz.complete_dimensions),
                                                'version': category_obj(version_obj, row[6], create=wiz.complete_dimensions),
-                                               # row[7] Category: BIB ??
+                                               'categ_id': category_obj(product_category_obj, row[7], create=wiz.complete_dimensions),
                                                'categoria': category_obj(categoria_obj, row[8], create=wiz.complete_dimensions),
                                                'subcategoria': category_obj(sub_categoria_obj, row[9], create=wiz.complete_dimensions),
                                                # row[10] Supplier -> supplierinfo
