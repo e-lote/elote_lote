@@ -96,10 +96,6 @@ class purchase_order_line(osv.osv):
 	def _check_lotes(self, cr, uid, ids, context=None):
             assert len(ids) == 1, "Only works by one line"
             obj = self.browse(cr, uid, ids[0], context=context)
-            print "----"
-            print obj.product_id.id
-            import pdb; pdb.set_trace()
-            print obj.order_id.lote_id.id
             r = len(self.pool.get('product.product').search(cr, uid,
                                                                [('id','=',obj.product_id.id)],
                                                                context={'search_default_elote_id': obj.order_id.lote_id.id})
