@@ -33,7 +33,7 @@ def unicode_csv_reader(unicode_csv_data, dialect=csv.excel, **kwargs):
                             dialect=dialect, **kwargs)
     for row in csv_reader:
         # decode UTF-8 back to Unicode, cell by cell:
-        yield [unicode(cell, 'utf-8') for cell in row]
+        yield (csv_reader.line_num, [unicode(cell, 'utf-8') for cell in row])
 
 def utf_8_encoder(unicode_csv_data):
     for line in unicode_csv_data:
@@ -74,7 +74,7 @@ class catalog_import(osv.osv_memory):
         'data': fields.binary(string='Catalog File', required=True),
         'lote_id': fields.many2one('elote.lote', string='Lote', domain="[('state','=','open')]", required=True),
         'first_row_column': fields.boolean('1st Row Column Names'),
-        'delimiter': fields.selection([('|','bar (|)'),(',','comma (,)')], string="Delimiter", required=True),
+        'delimiter': fields.selection([(';','semicolon (;)'),('|','bar (|)'),(',','comma (,)')], string="Delimiter", required=True),
         'update_products': fields.boolean('Update products'),
         'update_supplierinfo': fields.boolean('Update supplier info'),
         'complete_dimensions': fields.boolean('Complete dimensiones'),
@@ -114,12 +114,18 @@ class catalog_import(osv.osv_memory):
         si_ids = []
 
         for wiz in self.browse(cr, uid, ids):
-            ss = StringIO(unicode(base64.b64decode(wiz.data), 'utf-8'))
+            try:
+                ss = StringIO(unicode(base64.b64decode(wiz.data), 'utf-8'))
+            except UnicodeDecodeError:
+                ss = StringIO(unicode(base64.b64decode(wiz.data), 'latin1'))
+            except UnicodeDecodeError:
+                raise osv.except_osv(_('Encoding Error!'), _("Please, check to store file in utf-8 or latin-1 encoding"))
+
             ireader = unicode_csv_reader(ss, delimiter=str(wiz.delimiter))
 
             # Ignore first line
             if wiz.first_row_column:
-                s = ireader.next()
+                ln, s = ireader.next()
                 if len(s) != 45:
                     raise osv.except_osv(_('Error!'), _("File must have 45 columns. You give %s columns") % (len(s)))
 
@@ -127,7 +133,7 @@ class catalog_import(osv.osv_memory):
             vals = {}
 
             # Help functions
-            def imp_process(obj, fil, update, values):
+            def imp_process(obj, fil, update, values, line_num=None):
                 fil = [ f for f in fil if f[-1] ]
                 if not fil:
                     return False
@@ -140,29 +146,33 @@ class catalog_import(osv.osv_memory):
                     return ids[0]
                 elif len(ids) > 1:
                     return False
-                return obj.create(cr, uid, values)
+                try:
+                    return obj.create(cr, uid, values)
+                except Exception, m:
+                    raise osv.except_osv(_('Error in line: %s') % line_num,
+                                         _("Cant create %s because the following error:\n%s") % (obj, m))
 
             def category_obj(obj, value, create=True, force=False):
                 value = value.lower().strip()
                 if value:
                     r = (obj.search(cr, uid, [('name', '=', value)]) + [False])[0] or (create and obj.create(cr, uid, { 'name': value }))
                 elif force:
-                    raise RuntimeError, "Need valid name for object '%s'" % (obj.description)
+                    raise osv.except_osv(_('Error!'), _("Need valid name for object '%s'") % (obj.description))
                 else:
                     return False
                 if r:
                     return r
                 elif force:
-                    raise RuntimeError, "No instance for object '%s' with name '%s'" % (obj.description, value)
+                    raise osv.except_osv(_('Error!'), _("No instance for object '%s' with name '%s'") % (obj.description, value))
                 else:
                     return False
 
             # Read all lines
-            for row in ireader:
+            for line_num, row in ireader:
                 # Check column count
                 if len(row) != 45:
                     raise osv.except_osv(_('Error!'), _("Line %s: File must have 45 columns. You give %s columns") %
-                                         (ireader.line_num, len(row)))
+                                         (line_num, len(row)))
                 
                 # Translate values
                 partner_id = (partner_obj.search(cr, uid, ['|',('name','=',row[10]),('ref','=',row[10])])+
@@ -203,7 +213,7 @@ class catalog_import(osv.osv_memory):
                                                'ref': _n(row[42]),
                                                'name': _n(row[43]),
                                                'producto_nuevo': row[44].lower() == 'true',
-                                              })
+                                              }, line_num)
                 supplierinfo_id = imp_process(supplierinfo_obj,
                                               [('product_tmpl_id','=', product_tmpl_id),
                                                ('name','=',partner_id),
@@ -225,7 +235,7 @@ class catalog_import(osv.osv_memory):
 						                       'carton_heigth': _c(row[34]),
 						                       'carton_volume': _c(row[35]),
 						                       'min_qty': _f(row[36]),
-                                              })
+                                              }, line_num)
                 if supplierinfo_id:
                     si_ids.append(supplierinfo_id)
 
