@@ -64,26 +64,26 @@ class purchase_order(osv.osv):
         	return True
 
         def create(self, cr, uid, vals, context=None):
-		lote_id = self.pool.get('elote.lote').search(cr,uid,[('state','=','open')])
-		if not lote_id:
-                        raise osv.except_osv('Error!', 'No hay lotes abiertos para procesar.')
+            lote_id = self.pool.get('elote.lote').search(cr,uid,[('state','=','open')])
+            if not lote_id:
+                    raise osv.except_osv('Error!', 'No hay lotes abiertos para procesar.')
 
-		vals['lote_id'] = lote_id[0]
-		user_obj = self.pool.get('res.users').browse(cr,uid,uid,context=context)
-		vals['dest_address_id'] = user_obj.partner_id.id
-		
-		if not vals['lote_id']:
-                        raise osv.except_osv('Error!', 'No hay lotes abiertos para procesar.')
-		valid_user = False
-		obj = self.pool.get('elote.lote').browse(cr, uid, lote_id, context=context)
-		for user in obj[0].user_ids:
-			if user.id == uid:
-				valid_user = True
-				break
-		if not valid_user:
-                        raise osv.except_osv('Error!', 'El usuario no se encuentra habilitado para procesar lotes.')
-			
-        	return super(purchase_order, self).create(cr, uid, vals, context=context)
+            vals['lote_id'] = lote_id[0]
+            user_obj = self.pool.get('res.users').browse(cr,uid,uid,context=context)
+            vals['dest_address_id'] = user_obj.partner_id.id
+            
+            if not vals['lote_id']:
+                    raise osv.except_osv('Error!', 'No hay lotes abiertos para procesar.')
+            valid_user = False
+            obj = self.pool.get('elote.lote').browse(cr, uid, lote_id, context=context)
+            for user in obj[0].user_ids:
+                    if user.id == uid:
+                            valid_user = True
+                            break
+            if not valid_user:
+                    raise osv.except_osv('Error!', 'El usuario no se encuentra habilitado para procesar lotes.')
+                    
+            return super(purchase_order, self).create(cr, uid, vals, context=context)
 	
 
 purchase_order()
