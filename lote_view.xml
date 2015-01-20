@@ -24,6 +24,10 @@
             <field name="arch" type="xml">
                 <form string="Lotes">
 		    <header>
+			    <button string="Open" name="do_open" type="object" states="draft" class="oe_highlight"/>
+			    <button string="Close" name="do_close" type="object" states="open" class="oe_highlight"/>
+			    <button string="Cancel" name="do_cancel" type="object" states="draft,open"/>
+			    <button string="To Draft" name="do_draft" type="object" states="close,cancel"/>
 			    <field name="state" widget="statusbar" statusbar_colors='{}'/>
 		    </header>
                     <sheet string="Lotes">

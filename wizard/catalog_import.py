@@ -213,6 +213,7 @@ class catalog_import(osv.osv_memory):
                                                'ref': _n(row[42]),
                                                'name': _n(row[43]),
                                                'producto_nuevo': row[44].lower() == 'true',
+                                               'route_ids': False,
                                               }, line_num)
                 supplierinfo_id = imp_process(supplierinfo_obj,
                                               [('product_tmpl_id','=', product_tmpl_id),
